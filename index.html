@@ -7,6 +7,188 @@
     <title>Simple CSS3D Calibration</title>
 </head>
 <body>
-    
+    <div id="params">
+        <div id="name">Name</div>
+        <div id="view" class="param">
+            <div>
+                <label for="display">View</label>
+            </div>
+            <input type="checkbox" id="checkbox_view" checked>
+        </div>
+        <div id="perspective" class="param">
+            <div>
+                <label for="perspective">Perspective: </label>
+                <span id="val_perspective">600</span><span>px</span>
+            </div>
+            <input type="range" id="range_perspective" min="0" max="1500" step="1" value="0">
+        </div>
+        <div id="translate_x" class="param">
+            <div>
+                <label for="translate_x">Translate X: </label>
+                <span id="val_translate_x">0</span><span>px</span>
+            </div>
+            <input type="range" id="range_translate_x" min="0" max="1500" step="1" value="0">
+        </div>
+        <div id="translate_y" class="param">
+            <div>
+                <label for="translate_y">Translate Y: </label>
+                <span id="val_translate_y">0</span><span>px</span>
+            </div>
+            <input type="range" id="range_translate_y" min="0" max="1500" step="1" value="0">
+        </div>
+        <div id="rotate_x" class="param">
+            <div>
+                <label for="rotate_x">Rotate X: </label>
+                <span id="val_rotate_x">0</span><span>deg</span>
+            </div>
+            <input type="range" id="range_rotate_x" min="-180" max="180" step="1" value="0">
+        </div>
+        <div id="rotate_y" class="param">
+            <div>
+                <label for="rotate_y">Rotate Y: </label>
+                <span id="val_rotate_y">0</span><span>deg</span>
+            </div>
+            <input type="range" id="range_rotate_y" min="-180" max="180" step="0.1" value="0">
+        </div>
+        <div id="rotate_z" class="param">
+            <div>
+                <label for="rotate_y">Rotate Z: </label>
+                <span id="val_rotate_z">0</span><span>deg</span>
+            </div>
+            <input type="range" id="range_rotate_z" min="-180" max="180" step="0.1" value="0">
+        </div>
+        <div id="scale_x" class="param">
+            <div>
+                <label for="scale_x">Scale X: </label>
+                <span id="val_scale_x">0</span>
+            </div>
+            <input type="range" id="range_scale_x" min="0" max="1" step="0.001" value="1.0">
+        </div>
+        <div id="scale_y" class="param">
+            <div>
+                <label for="scale_y">Scale Y: </label>
+                <span id="val_scale_y">0</span>
+            </div>
+            <input type="range" id="range_scale_y" min="0" max="1" step="0.001" value="1.0">
+        </div>
+        <div id="scale_z" class="param">
+            <div>
+                <label for="scale_y">Scale Z: </label>
+                <span id="val_scale_z">0</span>
+            </div>
+            <input type="range" id="range_scale_z" min="0" max="1" step="0.001" value="1.0">
+        </div>
+    </div>
+    <div id="calibration_container">
+        <img src="img/background.png" alt="background" id="background">
+    </div>
+    <div id="streaming_container">
+        <img src="img/display.jpg" alt="display" id="streaming">
+    </div>
 </body>
 </html>
+
+<script>
+let background = document.getElementById('background');
+
+let view = document.getElementById('checkbox_view');
+
+let calibration_container = document.getElementById('calibration_container');
+
+let params = {
+    perspective: { eRange: document.getElementById('range_perspective'), eVal: document.getElementById('val_perspective') },
+    translateX: { eRange: document.getElementById('range_translate_x'), eVal: document.getElementById('val_translate_x') },
+    translateY: { eRange: document.getElementById('range_translate_y'), eVal: document.getElementById('val_translate_y') },
+    rotateX: { eRange: document.getElementById('range_rotate_x'), eVal: document.getElementById('val_rotate_x') },
+    rotateY: { eRange: document.getElementById('range_rotate_y'), eVal: document.getElementById('val_rotate_y') },
+    rotateZ: { eRange: document.getElementById('range_rotate_z'), eVal: document.getElementById('val_rotate_z') },
+    scaleX: { eRange: document.getElementById('range_scale_x'), eVal: document.getElementById('val_scale_x') },
+    scaleY: { eRange: document.getElementById('range_scale_y'), eVal: document.getElementById('val_scale_y') },
+    scaleZ: { eRange: document.getElementById('range_scale_z'), eVal: document.getElementById('val_scale_z') }
+};
+
+let string = 'translate3d(' + params.translateX.eRange.value + 'px,' + params.translateY.eRange.value + 'px, 0px) rotate3d(1, 0, 0,' + params.rotateX.eRange.value + 'deg) rotate3d(0, 1, 0,' + params.rotateY.eRange.value + 'deg) rotate3d(0, 0, 1, ' + params.rotateZ.eRange.value + 'deg) scale3d(' + params.scaleX.eRange.value + ',' + params.scaleY.eRange.value + ',' + params.scaleZ.eRange.value + ')';
+
+let updateValueAndView = function(elem, target) {
+
+    target.innerHTML = elem.value;
+
+    calibration_container.style.perspective = params.perspective.eRange.value + 'px';
+
+    string = 'translate3d(' + params.translateX.eRange.value + 'px,' + params.translateY.eRange.value + 'px, 0px) rotate3d(1, 0, 0,' + params.rotateX.eRange.value + 'deg) rotate3d(0, 1, 0,' + params.rotateY.eRange.value + 'deg) rotate3d(0, 0, 1, ' + params.rotateZ.eRange.value + 'deg) scale3d(' + params.scaleX.eRange.value + ',' + params.scaleY.eRange.value + ',' + params.scaleZ.eRange.value + ')';
+
+    background.style.transform = string;
+};
+
+for (let key in params) {
+    params[key].eRange.addEventListener('input', function() {
+        updateValueAndView(this, params[key].eVal);
+    });
+
+    updateValueAndView(params[key].eRange, params[key].eVal);
+}
+
+view.addEventListener('click', function() {
+    if (view.checked === true) {
+        image.style.visibility = 'visible';
+    } else if (view.checked === false) {
+        image.style.visibility = 'hidden';
+    }
+});
+</script>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+
+    background: blue
+}
+#name {
+    margin-bottom: 5%;
+}
+#params {
+    padding: 2% 2%;
+    width: 300px;
+    position: fixed;
+    display: block;
+    right: 0;
+    z-index: 1000;
+
+    background-color:rgba(20, 20, 20, 0.95);
+    border-radius: 1%;
+    font-size: calc(15px + 10%);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    color: white
+}
+.param {
+    margin-bottom: 2%;
+}
+input[type="range"] {
+    width: 100%;
+}
+#calibration_container {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    transform-style: preserve-3d;
+    perspective: 600px;
+}
+#background {
+    border: 3px solid #ff0095;    
+
+    opacity: 0.7;
+}
+#streaming_container {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
